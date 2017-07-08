@@ -231,22 +231,6 @@ static void sComputeHash(NSString *path)
     
     CGColorSpaceRef colorSpace = CGImageGetColorSpace(image);
     
-    NSString *name = CFBridgingRelease(CGColorSpaceCopyName(colorSpace));
-    if (!colorSpace) {
-        [dataWriter writeUInt8:0];
-
-    } else if ([name isEqualToString:(__bridge id)kCGColorSpaceSRGB]) {
-        [dataWriter writeUInt8:1];
-
-    } else if ([name isEqualToString:(__bridge id)kCGColorSpaceDisplayP3]) {
-        [dataWriter writeUInt8:2];
-
-    } else {
-        NSData *data = CFBridgingRelease(CGColorSpaceCopyICCData(colorSpace));
-        [dataWriter writeUInt8:3];
-        [dataWriter writeData:data];
-    }
-
     CGContextRef context = CGBitmapContextCreate(NULL, width, height, bpc, bytesPerRow, colorSpace, bitmapInfo);
 
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
@@ -264,6 +248,24 @@ static void sComputeHash(NSString *path)
     [dataWriter writeUInt32:(UInt32)bpc];
     [dataWriter writeUInt32:(UInt32)bytesPerRow];
     [dataWriter writeUInt32:(UInt32)bitmapInfo];
+
+    NSString *name = CFBridgingRelease(CGColorSpaceCopyName(colorSpace));
+    if (!colorSpace) {
+        [dataWriter writeUInt8:0];
+
+    } else if ([name isEqualToString:(__bridge id)kCGColorSpaceSRGB]) {
+        [dataWriter writeUInt8:1];
+
+    } else if ([name isEqualToString:(__bridge id)kCGColorSpaceDisplayP3]) {
+        [dataWriter writeUInt8:2];
+
+    } else {
+        NSData *data = CFBridgingRelease(CGColorSpaceCopyICCData(colorSpace));
+        [dataWriter writeUInt8:3];
+        [dataWriter writeUInt32:(UInt32)[data length]];
+        [dataWriter writeData:data];
+    }
+
     [dataWriter writeData:bitmapData];
     
     NSData *ohSHData = sCreateSHA256160Hash(dataToHash);
