@@ -15,12 +15,12 @@ Is it necessary to run the crusher/optimizer on File 1? Will we end up with File
 
 # Methodology
 
-1. Compute the ohSH chunk of the new file:
+1. Compute the `ohSH` chunk of the new file:
 ```
 pngohsh compute new.png
 ```
 
-2. Read the ohSH chunk of the old file:
+2. Read the `ohSH` chunk of the old file:
 ```
 pngohsh read old.png
 ```
@@ -29,7 +29,7 @@ pngohsh read old.png
 
 4. If not equal, run `pngcrush`, `optipng`, `pngquant`, etc. Store the result to `new_crushed.png`.
 
-5. Save the ohSH chunk from Step 1 to the crushed file:
+5. Save the `ohSH` chunk from Step 1 to the crushed file:
 ```
 pngohsh write new_crushed.png 3432ce91ecc28194f0f41ec4b696f8352d73df29
 ```
@@ -52,3 +52,5 @@ This tool uses macOS's CoreGraphics and hashes the following components of the P
 4. bytesPerRow/CGBitmapInfo
 5. Color space
 6. Pre-multiplied image data
+
+A SHA-256/160 hash is used (20 bytes). Combined with PNG chunk information (12 bytes), this adds 32 bytes to the resulting file.
