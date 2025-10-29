@@ -105,7 +105,7 @@ static void sReadWriteHeader(DataReader *reader, DataWriter *writer)
         bytes[0] != 137 || bytes[1] != 'P' || bytes[2] != 'N' || bytes[3] != 'G' ||
         bytes[4] != 13  || bytes[5] != 10  || bytes[6] != 26  || bytes[7] != 10)
     {
-        fprintf(stderr, "Error: Not a PNG file");
+        fprintf(stderr, "Error: Not a PNG file\n");
         exit(2);
     }
 
@@ -123,7 +123,7 @@ static PNGChunk *sReadChunk(DataReader *reader)
     PNGChunk *chunk = [[PNGChunk alloc] initWithType:type data:data];
     
     if ([chunk checksum] != checksum) {
-        fprintf(stderr, "Error: PNG file is corrupted");
+        fprintf(stderr, "Error: PNG file is corrupted\n");
         exit(2);
     }
     
@@ -203,7 +203,7 @@ static void sComputeHash(NSString *path)
     CGImageRef image = CGImageCreateWithPNGDataProvider(provider, NULL, true, kCGRenderingIntentDefault);
 
     if (!image) {
-        fprintf(stderr, "Error: Could not read PNG file");
+        fprintf(stderr, "Error: Could not read PNG file\n");
         exit(2);
     }
 

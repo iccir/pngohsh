@@ -8,10 +8,10 @@
 
 
 @implementation DataReader {
-    NSData     *_data;
-    const void *_bytes;
-    NSInteger   _length;
-    NSInteger   _i;
+    NSData      *_data;
+    const void  *_bytes;
+    NSUInteger   _length;
+    NSUInteger   _i;
 }
 
 - (instancetype) initWithData:(NSData *)data
@@ -26,11 +26,18 @@
 }
 
 
+- (BOOL) ensure:(NSUInteger)length
+{
+    if (length > _length) return NO;
+    return _i <= (_length - length);
+}
+
+
 - (UInt8) readUInt8
 {
     UInt8 result = 0;
 
-    if (_i <= (_length - 1)) {
+    if ([self ensure:1]) {
         result = *((UInt8 *)&_bytes[_i]);
     }
 
@@ -44,7 +51,7 @@
 {
     UInt32 result = 0;
 
-    if (_i <= (_length - 4)) {
+    if ([self ensure:4]) {
         result = OSReadBigInt32(_bytes, _i);
     }
 
@@ -58,7 +65,7 @@
 {
     NSData *result = nil;
 
-    if (_i <= (_length - length)) {
+    if ([self ensure:length]) {
         result = [NSData dataWithBytes:&_bytes[_i] length:length];
     }
 
